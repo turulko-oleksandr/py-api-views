@@ -13,17 +13,7 @@ from cinema.views import (
 
 router = DefaultRouter()
 router.register(r"movies", MovieViewSet, basename="movie")
-
-cinema_hall_list = CinemaHallViewSet.as_view({
-    "get": "list",
-    "post": "create",
-})
-cinema_hall_detail = CinemaHallViewSet.as_view({
-    "get": "retrieve",
-    "put": "update",
-    "patch": "partial_update",
-    "delete": "destroy",
-})
+router.register(r"cinema_halls", CinemaHallViewSet, basename="cinema-hall")
 
 urlpatterns = [
     # FBV Movies
@@ -38,12 +28,7 @@ urlpatterns = [
     path("actors/", ActorList.as_view(), name="actor-list"),
     path("actors/<int:pk>/", ActorDetail.as_view(), name="actor-detail"),
 
-    # GenericViewSet CinemaHalls
-    path("cinema-halls/", cinema_hall_list, name="cinema-hall-list"),
-    path("cinema-halls/<int:pk>/",
-         cinema_hall_detail, name="cinema-hall-detail"),
-
-    # ModelViewSet Movies (using router)
+    # Router handles both movies + cinema halls
     path("", include(router.urls)),
 ]
 

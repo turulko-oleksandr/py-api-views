@@ -90,8 +90,20 @@ class GenreDetail(APIView):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def patch(self, request, pk):
+        genre = self.get_object(pk)
+        if not genre:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = GenreSerializer(genre, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     def delete(self, request, pk):
         genre = self.get_object(pk)
+        if not genre:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         genre.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -125,6 +137,9 @@ class ActorDetail(mixins.RetrieveModelMixin,
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
